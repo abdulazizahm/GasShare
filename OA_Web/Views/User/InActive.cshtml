@@ -1,0 +1,153 @@
+﻿@model IEnumerable<OA_Service.ViewModels.AdminDisplayUserViewModel>
+
+@{
+    ViewData["Title"] = "UnActivated";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h1>Inactive Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Full name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                National Id
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @item.FirstName @item.LastName
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SSN)
+            </td>
+            <td>
+                @Html.ActionLink("View", "UserInfo", new { id=item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<script> var message = '@ViewBag.message' </script>
+
+@section Scripts {
+<script>
+
+    function ShowAlert() {
+        //var successRegex = /\b(?:successfully)\b/gi;
+        var warrnigRegex = /\b(?:already)\b/gi;
+        var dangerRegex = /\b(?:cannot|Invalid)\b/gi;
+
+        if (message != null && message != "") {
+            if (dangerRegex.test(message)) {
+                createAlert('Opps!', 'Something went wrong', message, 'danger', true, false, 'pageMessages')
+            }
+            else if (warrnigRegex.test(message)) {
+                createAlert('', '', message, 'warning', true, true, 'pageMessages');
+            } else {
+                createAlert('', '', message, 'success', true, true, 'pageMessages');
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        ShowAlert()
+    });
+
+
+    function createAlert(title, summary, details, severity, dismissible, autoDismiss, appendToId) {
+        var iconMap = {
+            info: "fa fa-info-circle",
+            success: "fa fa-thumbs-up",
+            warning: "fa fa-exclamation-triangle",
+            danger: "fa ffa fa-exclamation-circle"
+        };
+
+        var iconAdded = false;
+
+        var alertClasses = ["alert", "animated", "flipInX"];
+        alertClasses.push("alert-" + severity.toLowerCase());
+
+        if (dismissible) {
+            alertClasses.push("alert-dismissible");
+        }
+
+        var msgIcon = $("<i />", {
+            "class": iconMap[severity] // you need to quote "class" since it's a reserved keyword
+        });
+
+        var msg = $("<div />", {
+            "class": alertClasses.join(" ") // you need to quote "class" since it's a reserved keyword
+        });
+
+        if (title) {
+            var msgTitle = $("<h4 />", {
+                html: title
+            }).appendTo(msg);
+
+            if (!iconAdded) {
+                msgTitle.prepend(msgIcon);
+                iconAdded = true;
+            }
+        }
+
+        if (summary) {
+            var msgSummary = $("<strong />", {
+                html: summary
+            }).appendTo(msg);
+
+            if (!iconAdded) {
+                msgSummary.prepend(msgIcon);
+                iconAdded = true;
+            }
+        }
+
+        if (details) {
+            var msgDetails = $("<p />", {
+                html: details
+            }).appendTo(msg);
+
+            if (!iconAdded) {
+                msgDetails.prepend(msgIcon);
+                iconAdded = true;
+            }
+        }
+
+
+        if (dismissible) {
+            var msgClose = $("<span />", {
+                "class": "close", // you need to quote "class" since it's a reserved keyword
+                "data-dismiss": "alert",
+                html: "<i class='fa fa-times-circle'></i>"
+            }).appendTo(msg);
+        }
+
+        $('#' + appendToId).prepend(msg);
+
+        if (autoDismiss) {
+            setTimeout(function () {
+                msg.addClass("flipOutX");
+                setTimeout(function () {
+                    msg.remove();
+                }, 1000);
+            }, 5000);
+        }
+    }
+
+
+</script>
+}

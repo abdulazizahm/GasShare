@@ -1,0 +1,301 @@
+﻿@model OA_Service.ViewModels.AdminDisplayUserViewModel
+
+@section Styles {
+    <style>
+
+        .modalImg {
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        /* Add Animation */
+        .modal-content, #caption {
+            -webkit-animation-name: zoom;
+            -webkit-animation-duration: 0.25s;
+            animation-name: zoom;
+            animation-duration: 0.25s;
+        }
+
+        @@-webkit-keyframes zoom {
+            from {
+                -webkit-transform: scale(0.8)
+            }
+
+            to {
+                -webkit-transform: scale(1)
+            }
+        }
+
+
+        @@keyframes zoom {
+            from {
+                transform: scale(0.8)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        .modalImg:hover {
+            opacity: 0.7;
+        }
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+            padding-left: 250px;
+        }
+
+        /* Modal Content (image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+        }
+
+        /* Caption of Modal Image */
+        #caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+        }
+
+        #img01 {
+            width: auto;
+            max-height: 90%;
+            max-width: 100%;
+        }
+
+        /* The Close Button */
+        #closeBtn {
+            position: absolute;
+            top: 75px;
+            right: 45px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 100;
+        }
+
+            #closeBtn:hover,
+            #closeBtn:focus {
+                color: #bbb;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        /* 100% Image Width on Smaller Screens */
+        @@media only screen and (max-width: 700px) {
+            .modal {
+                padding-left: 0;
+            }
+        }
+
+        .invalid {
+            background: rgba(209, 111, 111, 0.56);
+        }
+
+
+        textarea {
+            transition: background 0.3s;
+        }
+
+        .modal-backdrop {
+            z-index: 0;
+            opacity: 0.2;
+        }
+    </style>
+}
+
+@{
+    ViewData["Title"] = "UserInfo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="row justify-content-between align-content-center">
+    <div class="Col-8">
+        <h2>@Model.FirstName @Model.LastName</h2>
+    </div>
+    <div class="Col-4">
+        <a asp-action="Inactive" class="btn ml-auto mr-2">Back</a>
+    </div>
+    <div class="col-12">
+        <a href="/User/Activate/@Model.Id" class="btn btn-success">Activate</a>
+        @*<a href="/User/Decline/@Model.Id" class="btn btn-danger">Decline</a>*@
+        <a href="#" class="btn btn-secondary" data-toggle="modal" data-target="#basicModal">Decline</a>
+    </div>
+</div>
+
+<div class="row">
+    <h3 class="col-12">More Info</h3>
+
+    <div class="col-12">
+        <h4>Address: @Model.Address</h4>
+        @if (ViewBag.carOwner == true)
+        {
+            <h4>Accont type: Car Owner</h4>
+        }
+        else
+        {
+            <h4>Accont type: User</h4>
+        }
+
+    </div>
+    <h3 class="col-12">Photos</h3>
+    <div class="col-4">
+        <img class="modalImg" onclick="OpenModal(this)" src="~/images/Users/@Model.Photo" alt="@Model.FirstName @Model.LastName" />
+    </div>
+    <div class="col-8">
+        <div class="row">
+            <div class="col-6">
+                <img class="modalImg" onclick="OpenModal(this)" src="~/images/UserPhotos/@Model.UserPhoto.SSN_Photo" alt="Nationa Id: @Model.SSN" />
+            </div>
+            @if (ViewBag.carOwner == true && Model.Car != null)
+            {
+
+                <div class="col-6">
+                    <img class="modalImg" onclick="OpenModal(this)" src="~/images/UserPhotos/@Model.UserPhoto.LicencePhoto" alt="Nationa Id: @Model.SSN" />
+                </div>
+
+                <div class="col-6">
+                    <img class="modalImg" onclick="OpenModal(this)" src="~/images/Cars/@Model.Car.Car_Photo" alt="Car model: @Model.Car.Car_Model" />
+                </div>
+                <div class="col-6">
+                    <img class="modalImg" onclick="OpenModal(this)" src="~/images/Cars/@Model.Car.Licence_Photo" alt="Car number: @Model.Car.Car_Number" />
+                </div>
+            }
+            else if(ViewBag.carOwner == false)
+            {
+
+            }
+            else
+            {
+                <h3 class="text-danger">
+                    Car Owner Account Type has no car
+                </h3>
+            }
+        </div>
+    </div>
+    <hr />
+
+</div>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+    <span id="closeBtn">&times;</span>
+    <img class="modal-content" id="img01">
+    <div id="caption">National Id: @Model.SSN</div>
+</div>
+
+
+<!-- basic modal -->
+<div class="modal fade" id="basicModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background-color: #1A203E;">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Reason For Decline ?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="DeclineUser(event)">
+                    <input type="text" name="Id" hidden value="@Model.Id" />
+
+                    <div class="custom-control custom-radio">
+                        <input type="radio" name="declineReason" id="customRadio1" value="conflicting personal info" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="customRadio1">conflicting personal info</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" name="declineReason" id="customRadio2" class="custom-control-input" value="Unclear Photos">
+                        <label class="custom-control-label" for="customRadio2">Unclear Photos</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" name="declineReason" id="customRadio3" class="custom-control-input" value="Expired id or license">
+                        <label class="custom-control-label" for="customRadio3">Expired id or license</label>
+                    </div>
+                    <div class="custom-control custom-radio">
+                        <input type="radio" name="declineReason" id="customRadio4" class="custom-control-input" value="Other">
+                        <label class="custom-control-label" for="customRadio4">Other</label>
+                    </div>
+                    <div class="custom-control mr-4">
+                        <textarea id="reasonText" class="form-control " placeholder="Enter reason here"></textarea>
+                    </div>
+                    <br />
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var modalImg = document.getElementById("img01");
+        var captionText = document.getElementById("caption");
+
+
+        function OpenModal(img) {
+            modal.style.display = "block";
+            modalImg.src = img.src;
+            captionText.innerHTML = img.alt;
+        }
+
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementById("closeBtn");
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+
+        function DeclineUser(e) {
+            e.preventDefault()
+            var selectionVal = document.querySelector('form input[name=declineReason]:checked').value;
+            var id = document.querySelector('form input[name=Id]').value;
+            if (selectionVal != "Other") {
+                window.location.href = '@Url.Action("Decline", "User")/' + id + '?reason=' + selectionVal;
+            }
+            else
+            {
+                var reason = document.getElementById('reasonText').value;
+                
+                if (reason == null || reason == "") {
+                    document.getElementById('reasonText').classList.add('invalid');
+                }
+                else {
+                    console.log(reason);
+                    window.location.href = '@Url.Action("Decline", "User")/' + id + '?reason=' + reason;
+                }
+            }
+        }
+    </script>
+}

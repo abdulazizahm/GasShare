@@ -1,0 +1,58 @@
+﻿@model OA_Service.ViewModels.CommentViewModel
+@inject OA_Service.AppServices.AccountAppService accontApp;
+
+<br />
+<div class="container">
+    <div class="row">
+        <div class="d-flex align-content-center col-11 px-0">
+            <img src=/images/Users/@Model.User.Photo style="object-fit:cover" class="rounded-circle" width="40" height="40">
+            <div class="comment-body">
+                <h6 ><a class="text-decoration-none text-dark" href="/Profile/Id/@Model.User.Id">@Model.User.FirstName @Model.User.LastName</a></h6>
+                <p id="comment-@Model.Id-body">@Model.Body</p>
+            </div>
+            
+        </div>
+        <div class="col-1 px-0 pt-1">
+
+            @if (User.Identity.IsAuthenticated && Model.User_Id == accontApp.FindByEmail(User.Identity.Name).Id)
+            {
+            <div class="dropdown">
+                <span class="material-icons" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    more_vert
+                </span>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" id="@Model.Id" href="javascript:void(0)" onclick="EditComment(@Model.Id, @Model.Journey_Id)">edit</a>
+                    <a class="dropdown-item" onclick="DeleteComment(@Model.Id, @Model.Journey_Id)" href="javascript:void(0)" >Delete</a>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    
+
+    <div id="comment-@Model.Id" style="display:none">
+
+        <form asp-action="updateComment" asp-route-Id="@Model.Id" asp-controller="Comment">
+            <div class="row">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="col col-md-8">
+                    <div class="form-group">
+                        <textarea name="Body" id="Body" class="form-control" style="width:100%">@Model.Body</textarea>
+                        <span asp-validation-for="Body" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col col-md-4">
+                    <div class="form-group">
+                        <input type="submit" value="Save Edit" class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+    </div>
+
+</div>
+

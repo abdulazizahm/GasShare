@@ -1,0 +1,74 @@
+﻿@model OA_Service.ViewModels.SearchViewModel
+@{ 
+    var date = Model?.Date ?? DateTime.Now;
+    var time = Model?.Time ?? DateTime.Now;
+
+    var hasDate = Model?.Date != null;
+    var hasTime = Model?.Time != null;
+    var hasPassNumber = Model?.Passengers_Number != null;
+
+    var openAccourdion = hasDate || hasTime || hasPassNumber;
+}
+
+
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/site/css/main.css" />
+}
+    <div class=" customcared-5 row">
+        <div class="col-12">
+            <div class="customcared-body">
+                <form asp-controller="Journey" asp-action="Search" method="get">
+                    <div class="form-row">
+                        <div class="form-group mb-1 col-md-6">
+                            <label class="from font-weight-bold">From</label>
+                            <input class="form-control" type="text" id="from" name="From" value="@Model?.From" placeholder="City, Region or Airport" required="required">
+                        </div>
+                        <div class="form-group mb-1 col-md-6">
+                            <label class="to font-weight-bold">To</label>
+                            <input class="form-control" id="to" type="text" name="To" value="@Model?.To" placeholder="City, Region or Airport" required="required">
+                        </div>
+                    </div>
+
+                    <div class="accordian">
+                        <div class="accordian-title @(openAccourdion ? "active" : "")">
+                            Advanced Search
+                            <span>
+                                <svg width="16px" height="16px" viewBox="0 0 24 24" aria-labelledby="plusIconTitle" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <title id="plusIconTitle">Plus</title>
+                                    <path d="M20 12L4 12M12 4L12 20" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="accordian-content"  @(openAccourdion ? "style=display:block" : "")>
+                            <div class="container" id="newComment">
+                                <div class="form-row">
+                                    <div class="form-group mb-1 col-md-3">
+                                        <label class="info">Passengers</label>
+                                        <input class="form-control" type="number" value="@Model?.Passengers_Number" name="Passengers_Number" placeholder="1 Person" id="info">
+
+                                    </div>
+
+                                    <div class="form-group mb-1 col-md-3">
+                                        <label class="Date">Date</label>
+                                        <input class="form-control" type="Date"  value="@(hasDate ? date.ToString("yyyy-MM-dd"): "")" id="datepicker" name="Date" placeholder="--:-- tt">
+                                    </div>
+
+                                    <div class="form-group mb-1 col-md-3">
+                                        <label class="">Time</label>
+                                        <input class="form-control" type="Time" value="@(hasTime ? time.ToString("hh:mm") : "")" name="Time" placeholder="mm/dd/yyyy" id="Time">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <button class="btn-submit button" type="submit">search</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>

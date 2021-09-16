@@ -1,0 +1,91 @@
+﻿@model OA_Service.ViewModels.CarViewModel
+
+@{
+    ViewData["Title"] = "EditCar";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+
+            <h1>Update Car Info</h1>
+            <form enctype="multipart/form-data" asp-action="AddCar">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="col col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Car_Model" class="control-label"></label>
+                            <input asp-for="Car_Model" class="form-control" />
+                            <span asp-validation-for="Car_Model" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Car_Number" class="control-label"></label>
+                            <input asp-for="Car_Number" class="form-control" />
+                            <span asp-validation-for="Car_Number" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" >
+                    <div class="col col-md-6">
+                        <div class="form-group imageContainer"  height="150px">
+                            <label asp-for="Car_Photo" class="control-label"></label>
+                            <div>
+                                <img src="~/img/default.jpg" id="SSN_Photo"/>
+                            </div>
+                            <input type="file" asp-for="PhotoFormFile" class="form-control" onchange="UploadImageOne(this)" />
+                            <span asp-validation-for="Car_Photo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col col-md-6">
+                        <div class="form-group imageContainer"  height="150px" id="licenceContainer">
+                            <label asp-for="Licence_Photo" class="control-label"></label>
+                            <div>
+                                <img src="~/img/default.jpg" id="LicencePhoto"  />
+                            </div>
+                            <input type="file" asp-for="LicenceFormFile" class="form-control" onchange="UploadImagetwo(this)" />
+                            <span asp-validation-for="Licence_Photo" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+
+        function UploadImageOne(fileInput) {
+            var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+            filereader.onload = (event) => {
+                document.getElementById("SSN_Photo").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+        function UploadImagetwo(fileInput) {
+            var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+            filereader.onload = (event) => {
+                document.getElementById("LicencePhoto").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+
+
+    </script>
+}

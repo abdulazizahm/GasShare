@@ -1,0 +1,453 @@
+﻿@model OA_Service.ViewModels.ProfileViewModel
+@using OA_Service.ViewModels
+@inject OA_Service.AppServices.JourneyAppService journyAppService
+
+@{
+    ViewBag.Title = "Profile";
+    //Layout = "~/Views/Shared/_MainSiteLayoutView.cshtml";
+
+    if (User.Identity.Name != Model.Username)
+    {
+        ViewBag.Title = $"{Model.FirstName} {Model.LastName}";
+    }
+    var message = "";
+    if(ViewBag.message != null)
+    {
+        message = ViewBag.message;
+    }
+
+}
+
+@section styles {
+    <link rel="stylesheet" href="~/site/profileStyles.css" />
+}
+
+<div class="container">
+    
+    <div class="row">
+        <div class="col-12 mt-3 mb-1 ml-3">
+            <img src="~/images/Users/@Model.Photo" style="width:200px; height:200px" class="rounded-circle profile-photo" />
+            <h3>
+                @Model.FirstName @Model.LastName
+                @if (Model.User_Status == OA_DAL.Models.User_Status.Active)
+                {
+                    <span class="badge badge-success">Active</span>
+                }
+                else if (Model.User_Status == OA_DAL.Models.User_Status.InActive)
+                {
+                    <span class="badge badge-secondary">Under review</span>
+                }
+                else if (Model.User_Status == OA_DAL.Models.User_Status.Block)
+                {
+                    <span class="badge badge-danger">Blocked</span>
+                }
+                else if (Model.User_Status == OA_DAL.Models.User_Status.Declined)
+                {
+                    <span class="badge badge-danger">Declined</span>
+                }
+            </h3>
+        </div>
+        <div class="col-12">
+            <div class="card profile-container">
+                <div class="card-body">
+
+                    <div class="row ">
+                        <div class="col-12">
+                            <ul class="nav nav-tabs heading" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active"
+                                       id="basicInfo-tab"
+                                       data-toggle="tab"
+                                       href="#basicInfo"
+                                       role="tab"
+                                       aria-controls="basicInfo"
+                                       aria-selected="true">Account Info</a>
+                                </li>
+                                @if (Model.Role == "Car_Owner")
+                                {
+
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           id="connectedServices-tab"
+                                           data-toggle="tab"
+                                           href="#connectedServices"
+                                           role="tab"
+                                           aria-controls="connectedServices"
+                                           aria-selected="false">Car Info</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           id="connectedServices-tab2"
+                                           data-toggle="tab"
+                                           href="#connectedServices2"
+                                           role="tab"
+                                           aria-controls="connectedServices2"
+                                           aria-selected="false">Journeys</a>
+                                    </li>
+
+                                }
+
+                                @if (Model.Role == "Admin" && User.Identity.Name == Model.Username)
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link btn btn-primary"
+                                           asp-controller="User" asp-action="Inactive"
+                                           role="tab">Admin Dashboard</a>
+                                    </li>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link"
+                                           id="connectedServices-tabAdmin"
+                                           data-toggle="tab"
+                                           href="#connectedServicesAdmin"
+                                           role="tab"
+                                           aria-controls="connectedServicesAdmin"
+                                           aria-selected="false">Complains</a>
+                                    </li>
+                                }
+                                @if (User.Identity.IsAuthenticated && User.Identity.Name != Model.Username && !User.IsInRole("Admin"))
+                                {
+                                    <li class="nav-item float-end">
+                                        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#myModal">File a Complain</button>
+                                    </li>
+
+                                }
+
+                            </ul>
+                            <div class="tab-content ml-1" id="myTabContent">
+                                <div class="tab-pane fade show active"
+                                     id="basicInfo"
+                                     role="tabpanel"
+                                     aria-labelledby="basicInfo-tab">
+
+                                    @if (User.Identity.Name == Model.Username)
+                                    {
+                                        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Update Personal Info</a>
+                                    }
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">User Name</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.FirstName @Model.LastName</div>
+                                    </div>
+                                    <hr />
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Email</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.Email</div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Address</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.Address</div>
+                                    </div>
+                                    <hr />
+                                    @if (User.Identity.Name == Model.Username)
+                                    {
+                                        <div class="row">
+                                            <div class="col-sm-3 col-md-2 col-5">
+                                                <label style="font-weight: bold">Phone Number</label>
+                                            </div>
+                                            <div class="col-md-8 col-6">@Model.PhoneNumber</div>
+                                        </div>
+                                        <hr />
+                                    }
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Account Type</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.Role</div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">status</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.User_Status</div>
+                                    </div>
+                                    <hr />
+
+
+                                </div>
+                                @if (Model.Role == "Car_Owner")
+                                {
+                            <div class="tab-pane fade"
+                                 id="connectedServices"
+                                 role="tabpanel"
+                                 aria-labelledby="ConnectedServices-tab">
+                                @if (ViewBag.Car == null)
+                                {
+                                    <a class="btn btn-primary" style="margin-bottom:1rem" asp-controller="Car" asp-action="AddCar">Add Car</a>
+                                }
+                                else
+                                {
+
+                                    @if (User.Identity.Name == Model.Username)
+                                    {
+                                        <a class="btn btn-primary" style="margin-bottom:1rem" asp-controller="Car" asp-action="updateCar" asp-route-Id="@ViewBag.Car.Id">Edit Car</a>
+                                    }
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Model</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@ViewBag.Car.Car_Model</div>
+                                    </div>
+                                    <hr />
+
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Email</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@Model.Email</div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Number</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">@ViewBag.Car.Car_Number</div>
+                                    </div>
+                                    <hr />
+                                    <div class="row">
+                                        <div class="col-sm-3 col-md-2 col-5">
+                                            <label style="font-weight: bold">Car photo</label>
+                                        </div>
+                                        <div class="col-md-8 col-6">
+                                            <img src="~/images/Cars/@ViewBag.Car.Car_Photo"
+                                                 height="100" width="150"
+                                                 asp-append-version="true" />
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    @if (User.Identity.Name == Model.Username)
+                                    {
+                                        <div class="row">
+                                            <div class="col-sm-3 col-md-2 col-5">
+                                                <label style="font-weight: bold">Licence photo</label>
+                                            </div>
+                                            <div class="col-md-8 col-6">
+                                                <img src="~/images/Cars/@ViewBag.Car.Licence_Photo"
+                                                     height="100" width="150"
+                                                     asp-append-version="true" />
+                                            </div>
+                                        </div>
+                                        <hr />
+                                    }
+                                }
+
+                            </div>
+
+
+                                    <div class="tab-pane fade"
+                                         id="connectedServices2"
+                                         role="tabpanel"
+                                         aria-labelledby="ConnectedServices-tab2">
+
+                                        @{
+                                            List<JourneyViewModel> lst = journyAppService.GetJourneysByUserId(Model.Id);
+                                            var active = lst.Where(j => new DateTime(j.Date.Year, j.Date.Month, j.Date.Day, j.Time.Hour, j.Time.Minute, j.Time.Second) > DateTime.Now).OrderBy(j => j.Date).ThenBy(j => j.Time);
+                                            var inActive = lst.Where(j => new DateTime(j.Date.Year, j.Date.Month, j.Date.Day, j.Time.Hour, j.Time.Minute, j.Time.Second) <= DateTime.Now).OrderBy(j => j.Date).ThenBy(j => j.Time);
+                                        }
+
+                                        <ul class="nav nav-tabs row" role="tablist">
+                                            <li class="nav-item col-6 px-0">
+                                                <a class="nav-link active text-dark font-weight-bold" data-toggle="tab" href="#tabs-1" role="tab">Active</a>
+                                            </li>
+                                            <li class="nav-item col-6 px-0 ">
+                                                <a class="nav-link text-dark font-weight-bold" data-toggle="tab" href="#tabs-2" role="tab">InActive</a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+
+                                                @foreach (var item in active)
+                                                {
+                                                    <partial name="_JourneyPartial" model="item" />
+                                                }
+
+
+                                            </div>
+                                            <div class="tab-pane" id="tabs-2" role="tabpanel">
+
+                                                @foreach (var item in inActive)
+                                                {
+                                                    <partial name="_JourneyPartial" model="item" />
+                                                }
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                }
+                                <!--complians-->
+                                <div class="tab-pane fade"
+                                     id="connectedServicesAdmin"
+                                     role="tabpanel"
+                                     aria-labelledby="connectedServices-tabAdmin">
+                                    @if (Model.User_Status == OA_DAL.Models.User_Status.Block)
+                                    {
+                                        <a asp-action="UnBlockUser" asp-controller="Profile" asp-route-id="@Model.Id" class="btn btn-primary">Unblock</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-danger" asp-action="BlockUser" asp-controller="Profile" asp-route-id="@Model.Id">Block</a>
+                                    }
+                                    <div class="row mt-3 ml-3">
+                                        @foreach (var com in Model.Complains_About)
+                                        {
+                                            <div class="d-flex align-content-center col-12 px-0">
+                                                <img src=/images/Users/@com.Comlainer.Photo style="object-fit:cover" class="rounded-circle" width="40" height="40">
+                                                <div class="comment-body" style="background: #eaeaea;">
+                                                    <h6><a class="text-decoration-none text-dark" href="/Profile/Id/@com.Comlainer.Id">@com.Comlainer.FirstName @com.Comlainer.LastName</a></h6>
+                                                    <p>@com.Body</p>
+                                                </div>
+
+                                            </div>
+                                            <hr class="col-12" />
+                                        }
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <!--End -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@if (User.Identity.Name != Model.Username)
+            {
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" role="dialog">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="bg-dark text-white modal-header ">
+                                <div class="col-sm-11">
+                                    <h4 class="modal-title text-left" style="font-size: 2em; color: white;">Make Complain</h4>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="button" class="close" style="font-size:2em;" data-dismiss="modal">&times;</button>
+                                </div>
+                            </div>
+                            <form class="form-horizontal" onsubmit="sendnot(event)" id="formcomplain">
+                                <input type="hidden" value="" name="User_Id" id="User_Id" />
+                                <input type="hidden" value="@Model.Id" name="Complained_About_Id" id="Complained_About_Id" />
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <div class="col-md-10  col-sm-9">
+                                            <label class="control-label" for="comment" style="font-size: 2em; ">Complain message:</label>
+                                            <textarea class="form-control" required rows="5" name="Body" id="Body" oninvalid="this.setCustomValidity('Please Enter Complain That Will Send To Administration Of Website')" oninput="setCustomValidity('')"></textarea>
+                                        </div>
+                                    <div class="col-md-2 col-sm-3 hide"></div>
+                                    </div>
+                        &nbsp;&nbsp;&nbsp;<div id="message"></div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class='btn btn-primary'>Send Complain</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+}
+
+<script>var message = '@ViewBag.message'</script>
+
+@section scripts {
+
+
+    @*<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    @*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>*@
+
+    <script>
+
+        function ShowAlert() {
+            //var successRegex = /\b(?:successfully)\b/gi;
+            var warrnigRegex = /\b(?:already)\b/gi;
+            var dangerRegex = /\b(?:cannot|Invalid)\b/gi;
+
+            if (message != null && message != "") {
+                if (dangerRegex.test(message)) {
+                    createAlert('Opps!', 'Something went wrong', message, 'danger', true, false, 'pageMessages')
+                }
+                else if (warrnigRegex.test(message)) {
+                    createAlert('', '', message, 'warning', true, true, 'pageMessages');
+                } else {
+                    createAlert('', '', message, 'success', true, true, 'pageMessages');
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            ShowAlert()
+        });
+
+
+        if (location.href.endsWith("tab")) {
+            $("#connectedServices-tab2").tab("show");
+          
+        }
+        
+        if (location.href.endsWith("complain")) {
+            $("#connectedServices-tabAdmin").tab("show");
+
+        }
+        $("#formcomplain").ready(function () {
+            $('#message').val = "";
+            $('#message').html("");
+        });
+        function sendnot(e) {
+
+            e.preventDefault();
+
+            var data, xhr;
+
+            data = new FormData(e.target);
+
+            xhr = new XMLHttpRequest();
+
+            xhr.open('POST', '/Complain/AddComplain', true);
+            xhr.onload = function () {
+                if (xhr.readyState === xhr.DONE) {
+                    if (xhr.status === 200) {
+                        console.log(xhr.response);
+                        console.log(xhr.responseText);
+                        $('#Body').val("");
+                        $('#Body').html("");
+                        $('#message').html(xhr.responseText);
+                        $('#message').val(xhr.responseText);
+                        $('#message').css({ "color": "green" });
+
+                        createAlert('', '', xhr.responseText, 'success', true, true, 'pageMessages');
+                    }
+                }
+
+            };
+            xhr.send(data);
+        }
+    </script>
+}

@@ -1,0 +1,17 @@
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.csproj.AssemblyReference.cache
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.GeneratedMSBuildEditorConfig.editorconfig
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.AssemblyInfoInputs.cache
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.AssemblyInfo.cs
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.csproj.CoreCompileInputs.cache
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_Service.deps.json
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_Service.dll
+E:\GasShare\OA_Service\bin\Debug\net5.0\ref\OA_Service.dll
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_Service.pdb
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_DAL.dll
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_Repository.dll
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_DAL.pdb
+E:\GasShare\OA_Service\bin\Debug\net5.0\OA_Repository.pdb
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.csproj.CopyComplete
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.dll
+E:\GasShare\OA_Service\obj\Debug\net5.0\ref\OA_Service.dll
+E:\GasShare\OA_Service\obj\Debug\net5.0\OA_Service.pdb

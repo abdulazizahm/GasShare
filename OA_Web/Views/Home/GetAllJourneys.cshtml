@@ -1,0 +1,41 @@
+﻿@model IEnumerable<OA_Service.ViewModels.JourneyViewModel>
+@using OA_DAL.Models;
+@{
+    int pgNum = 0;
+    Pager pager = new Pager();
+    if (ViewBag.Pager != null)
+    {
+        pager = ViewBag.Pager;
+        pgNum = pager.CurrentPage;
+    }
+
+}
+<div class="container">
+    <h3>All Nearby Journeys</h3>
+    @foreach (var j in Model)
+    {
+        <partial name="_JourneyPartial" model="j" />
+    }
+</div>
+
+
+
+@if (pager.TotalPages > 0)
+{
+    <ul class="pagination justify-content-center">
+        @for (int s = pager.StartPage; s <= pager.EndPage; s++)
+        {
+        <li class='page-item @(s == pager.CurrentPage ? "active" : "") '>
+            @if (ViewBag.lat != null)
+            {
+                <a class="page-link" asp-controller="Home" asp-action="GetAllJourneys" asp-route-pg="@s" asp-route-lat="@ViewBag.lat" asp-route-lng="@ViewBag.lng">@s</a>              }
+            else
+            {
+            <a class="page-link" asp-controller="Home" asp-action="GetAllJourneys" asp-route-pg="@s">@s</a>
+            }
+        </li>
+
+
+        }
+    </ul>
+}

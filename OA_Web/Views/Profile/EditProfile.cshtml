@@ -1,0 +1,118 @@
+﻿@model OA_Service.ViewModels.ProfileViewModel
+@inject OA_Service.AppServices.AccountAppService accountApp
+
+@{
+    ViewData["Title"] = "Edit Personal Info";
+    //Layout = "~/Areas/Identity/Pages/Account/Manage/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mt-2">
+
+            <h1 style="text-align:center">Edit Profile Data</h1>
+
+            <hr />
+            <form enctype="multipart/form-data" asp-action="EditProfile">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="row">
+                    <div class="form-group col-md-6 m-0">
+                        <label asp-for="FirstName"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-6 m-0">
+                        <label asp-for="LastName"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row">
+                    @if (Model.User_Status == OA_DAL.Models.User_Status.Declined || Model.User_Status == OA_DAL.Models.User_Status.InActive)
+                    {
+                        <div class="form-group col-md-6 m-0">
+                            <label asp-for="SSN"></label>
+                            <input asp-for="SSN" class="form-control" />
+                            <span asp-validation-for="SSN" class="text-danger"></span>
+                        </div>
+                    }
+                    <div class="form-group col-md-6 m-0">
+                        <label asp-for="Address"></label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                </div><br />
+                      <div class="row">
+                          <div class="form-group col-md-6 m-0">
+                              <label asp-for="Photo" class="control-label"></label>
+                              <div class="form-group imageContainer">
+                                  <div>
+                                      <img src="~/images/Users/@Model.Photo" id="Profil_Photo" />
+                                  </div>
+                                  <input type="file" name="FormFileProfilPhoto" id="FormFileProfilPhoto" value="@Model.Photo" class="form-control" onchange="UploadImageOne(this)" />
+                                  <span asp-validation-for="Photo" class="text-danger"></span>
+                              </div>
+                          </div>
+                          @if (Model.User_Status == OA_DAL.Models.User_Status.Declined || Model.User_Status == OA_DAL.Models.User_Status.InActive)
+                          {
+                      <div class="form-group col-md-6 m-0">
+                          <label asp-for="userPhoto.SSN_Photo" class="control-label">Id Photo</label>
+                          <div class="form-group imageContainer" style="height: 125px;">
+                              <div>
+                                  <img src="~/images/UserPhotos/@Model.userPhoto.SSN_Photo" id="SSN_Photo" />
+                              </div>
+                              <input type="file" name="FormFileSSN_Photo" id="FormFileSSN_Photo" value="@Model.userPhoto.SSN_Photo" class="form-control" onchange="UploadImageTwo(this)" />
+                              <span asp-validation-for="userPhoto.SSN_Photo" class="text-danger"></span>
+
+                          </div>
+
+                      </div>
+                          }
+                      </div>
+
+                <br />
+
+
+                <div class="form-group">
+                    <input type="submit" value="Save Edit" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript">
+
+        function UploadImageOne(fileInput) {
+            var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+            filereader.onload = (event) => {
+                document.getElementById("Profil_Photo").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+
+        function UploadImageTwo(fileInput) {
+            var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+            filereader.onload = (event) => {
+                document.getElementById("SSN_Photo").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+
+
+    </script>
+}
+

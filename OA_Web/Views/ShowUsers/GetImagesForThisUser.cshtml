@@ -1,0 +1,52 @@
+﻿@model IEnumerable<OA_Service.ViewModels.UserPhotoViewModel>
+
+@{
+    ViewData["Title"] = "GetImagesForThisUser";
+    Layout = "_AdminLayout";
+}
+
+<h1>GetImagesForThisUser</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SSN_Photo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LicencePhoto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+              
+                <img src="~/images/UserPhotos/@item.SSN_Photo" width="100px" height="100px"/>
+            </td>
+            <td>
+                @if (item.LicencePhoto != null)
+                {
+                    <img src="~/images/UserPhotos/@item.LicencePhoto" width="100px" height="100px" />
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+               
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a> |
+             
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

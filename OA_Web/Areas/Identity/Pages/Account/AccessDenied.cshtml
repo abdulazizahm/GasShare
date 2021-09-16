@@ -1,0 +1,34 @@
+﻿@page
+@model AccessDeniedModel
+@inject OA_Service.AppServices.AccountAppService account
+@{
+    ViewData["Title"] = "Access denied";
+}
+@{ 
+    
+}
+
+<div class="container">
+
+    <header>
+        <h1 class="text-danger">@ViewData["Title"]</h1>
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <p class="text-danger">you are not authorized</p>
+        }
+        else if (account.FindByEmail(User.Identity.Name).User_Status == User_Status.Block)
+        {
+            <p class="text-danger">Your account is blocked by admin</p>
+        }
+        else if (account.FindByEmail(User.Identity.Name).User_Status == User_Status.Declined)
+        {
+            <p class="text-danger">Your account is declined by admin update your info and resubmit your account</p>
+        }
+        else
+        {
+            <p class="text-danger">Your account is still under review</p>
+        }
+
+    </header>
+
+</div>

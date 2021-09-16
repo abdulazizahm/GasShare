@@ -1,0 +1,33 @@
+﻿@model IEnumerable<OA_Service.ViewModels.AdminDisplayUserViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Full name
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                National Id
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Id" asp-controller="Profile" asp-route-id="@item.Id" class="text-decoration-none">@item.FirstName @item.LastName</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SSN)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

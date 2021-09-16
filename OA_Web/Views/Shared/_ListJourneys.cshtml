@@ -1,0 +1,12 @@
+﻿@model List<OA_Service.ViewModels.JourneyViewModel>
+@using OA_DAL.Models;
+
+<h2 mt-2>Nearby Journeys</h2>
+@foreach (var j in Model)
+{
+    <partial name="_JourneyPartial" model="j" />
+}
+
+<div class="d-flex justify-content-center">
+    <button class="btn btn-secondary" onclick="GetLatLng()">Show More</button>
+</div>

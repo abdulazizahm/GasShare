@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31402.337
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OA_DAL", "OA_DAL\OA_DAL.csproj", "{99610235-E357-4F93-8828-B6130407C73C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OA_Repository", "OA_Repository\OA_Repository.csproj", "{DBAD14A8-690B-4B90-AF86-74379D413B11}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OA_Service", "OA_Service\OA_Service.csproj", "{FE975E4C-85D1-4721-A54E-8839C43AD9F5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OA_Web", "OA_Web\OA_Web.csproj", "{7CFFB585-8424-4054-B5CA-6AC4BD82E02E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99610235-E357-4F93-8828-B6130407C73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99610235-E357-4F93-8828-B6130407C73C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99610235-E357-4F93-8828-B6130407C73C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99610235-E357-4F93-8828-B6130407C73C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBAD14A8-690B-4B90-AF86-74379D413B11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAD14A8-690B-4B90-AF86-74379D413B11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAD14A8-690B-4B90-AF86-74379D413B11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAD14A8-690B-4B90-AF86-74379D413B11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE975E4C-85D1-4721-A54E-8839C43AD9F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE975E4C-85D1-4721-A54E-8839C43AD9F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE975E4C-85D1-4721-A54E-8839C43AD9F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE975E4C-85D1-4721-A54E-8839C43AD9F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CFFB585-8424-4054-B5CA-6AC4BD82E02E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CFFB585-8424-4054-B5CA-6AC4BD82E02E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CFFB585-8424-4054-B5CA-6AC4BD82E02E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CFFB585-8424-4054-B5CA-6AC4BD82E02E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {90DDAE3A-AE79-47B5-80ED-92E8289D73AF}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 5
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://dev.azure.com/ibrahimfarag570983
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = OA_DAL\\OA_DAL.csproj
+		SccProjectName1 = OA_DAL
+		SccLocalPath1 = OA_DAL
+		SccProjectUniqueName2 = OA_Repository\\OA_Repository.csproj
+		SccProjectName2 = OA_Repository
+		SccLocalPath2 = OA_Repository
+		SccProjectUniqueName3 = OA_Service\\OA_Service.csproj
+		SccProjectName3 = OA_Service
+		SccLocalPath3 = OA_Service
+		SccProjectUniqueName4 = OA_Web\\OA_Web.csproj
+		SccProjectName4 = OA_Web
+		SccLocalPath4 = OA_Web
+	EndGlobalSection
+EndGlobal

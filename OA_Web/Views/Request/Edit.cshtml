@@ -1,0 +1,378 @@
+﻿@model OA_Service.ViewModels.RequestViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+
+        #requestForm {
+            background-color: #ffffff;
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            font-size: 17px;
+            font-family: Raleway;
+            border: 1px solid #aaaaaa;
+        }
+
+            /* Mark input boxes that gets an error on validation: */
+            input.invalid {
+                background-color: #ffdddd;
+            }
+
+        /* Hide all steps by default: */
+        .tab {
+            display: none;
+        }
+
+        .button {
+            background-color: #04AA6D;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 17px;
+            font-family: Raleway;
+            cursor: pointer;
+            margin-top: 2rem;
+        }
+
+            .button:hover {
+                opacity: 0.8;
+            }
+
+        #prevBtn {
+            background-color: #bbbbbb;
+        }
+
+        /* Make circles that indicate the steps of the form: */
+        .step {
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: #bbbbbb;
+            border: none;
+            border-radius: 50%;
+            display: inline-block;
+            opacity: 0.5;
+        }
+
+            .step.active {
+                opacity: 1;
+            }
+
+            /* Mark the steps that are finished and valid: */
+            .step.finish {
+                background-color: #04AA6D;
+            }
+
+
+        .clear-both {
+            clear: both;
+        }
+
+        .block {
+            background-color: rgba(255, 255, 255, 0.5);
+            width: 60%;
+            margin: 0 auto;
+            margin-bottom: 30px;
+            padding: 10px;
+            text-align: center;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+        }
+
+        label.button {
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            background-color: #FFFFFF;
+            border: 1px solid #6C6C6C;
+            color: #6C6C6C;
+            padding: 5px 10px;
+            margin: 5px 0;
+            display: inline-block;
+            -webkit-transition: all 200ms linear;
+            -moz-transition: all 200ms linear;
+            -o-transition: all 200ms linear;
+            transition: all 200ms linear;
+        }
+
+            label.button:hover {
+                background-color: #F0F0F0;
+                cursor: pointer;
+                -webkit-transition: all 200ms linear;
+                -moz-transition: all 200ms linear;
+                -o-transition: all 200ms linear;
+                transition: all 200ms linear;
+            }
+
+        #multiple-file-preview {
+            border-top: 1px solid rgba(0, 0, 0, 0.11);
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            min-height: 100px;
+        }
+
+            #sortable li {
+                margin: 3px 3px 3px 0;
+                float: left;
+                width: 100px;
+                text-align: center;
+                position: relative;
+                background-color: #FFFFFF;
+            }
+
+                #sortable li, #sortable li img {
+                    -webkit-border-radius: 4px;
+                    -moz-border-radius: 4px;
+                    border-radius: 4px;
+                }
+
+                    #sortable li div.order-number {
+                        position: absolute;
+                        top: 2px;
+                        right: 2px;
+                        width: 15px;
+                        height: 15px;
+                        background-color: #2B91E3;
+                        color: #FFFFFF;
+                        font-size: 12px;
+                        -webkit-border-radius: 20px;
+                        -moz-border-radius: 20px;
+                        border-radius: 20px;
+                    }
+    </style>
+}
+
+@{ 
+    var CannotEdit = Model.Status == OA_DAL.Models.Request_Status.Cancelled || Model.Status == OA_DAL.Models.Request_Status.Rejected || (ViewBag.cannotEdit != null && ViewBag.cannotEdit);
+
+    var disabledHodlder = CannotEdit ? "disabled" : "";
+}
+
+<div class="container">
+
+    <h1>Edit</h1>
+    <hr />
+    @if (ViewBag.warnning != null)
+    {
+        @if (Model.Status == OA_DAL.Models.Request_Status.Approved)
+        {
+            <div class="alert alert-warning" role="alert">
+                @ViewBag.warnning
+            </div>
+        }
+        @if (Model.Status == OA_DAL.Models.Request_Status.Rejected || Model.Status == OA_DAL.Models.Request_Status.Cancelled)
+        {
+            <div class="alert alert-warning" role="alert">
+                @ViewBag.warnning <a asp-action="Search" asp-controller="Journey">Here</a>
+            </div>
+        }
+    }
+    <div class="row">
+        <div class="col-md-6">
+            <form id="requestForm" enctype="multipart/form-data" asp-route-returnUrl="/Request/Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group" hidden>
+                    <label asp-for="Journey_Id" class="control-label"></label>
+                    <input asp-for="Journey_Id" id="Journey_Id" class="form-control" />
+                    <span asp-validation-for="Journey_Id" class="text-danger"></span>
+                </div>
+                <div class="form-group" hidden>
+                    <label asp-for="User_Id" class="control-label"></label>
+                    <input asp-for="User_Id" id="User_Id" class="form-control" />
+                    <span asp-validation-for="User_Id" class="text-danger"></span>
+                </div>
+
+                
+
+
+                <div class="row align-content-center">
+                    <div class="col-4">
+                        <select @Html.Raw(disabledHodlder) class="form-control" name="Seats" id="seats" onchange="seatsChanged()">
+                            @if (Model.Status == OA_DAL.Models.Request_Status.Approved)
+                            {
+                                @for (int i = 1; i <= (Model.Journey.Passengers_Number + Model.Seats); i++)
+                                {
+                                    if (i == Model.Seats)
+                                    {
+                                        <option value="@i" selected>@i</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                @for (int i = 1; i <= (Model.Journey.Passengers_Number); i++)
+                                {
+                                    if (i == Model.Seats)
+                                    {
+                                        <option value="@i" selected>@i</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <label asp-for="Seats" class="control-label pt-1">Seats</label>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="row align-content-center">
+                            <select @Html.Raw(disabledHodlder) id="includeSelect" name="IncludeUser" class="form-control col-8" onchange="seatsChanged()">
+                                @if (Model.IncludeUser)
+                                {
+                                    <option value="true" selected>Include</option>
+                                    <option value="false">Don't Include'</option>
+                                }
+                                else
+                                {
+                                    <option value="true">Include</option>
+                                    <option value="false" selected>Don't Include'</option>
+                                }
+
+                            </select>
+                            <label for="includeSelect" class="control-label col-4 pt-1">Me</label>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="imagesContainer" @{if (Model.Photos.Count == 0) { <text> style="display:none" </text>  } } class="my-3">
+                    <div class="form-group">
+                        <label asp-for="PhotosFiles" for="images" id="imagesLabel" class="btn btn-success">Click to upload Id Cards' Images</label>
+                        <input id="images" asp-for="PhotosFiles" style="display:none" class="form-control" multiple />
+                        <span asp-validation-for="PhotosFiles" class="text-danger"></span>
+                    </div>
+
+                    <div id="multiple-file-preview">
+                        <ul id="sortable">
+                            @for (int i = 1; i <= Model.Photos.Count; i++)
+                            {
+                                <li class="ui-state-default" data-order="@{<text>i - 1</text>}" data-id="1628451727565">
+                                    <img src="~/images/Requests/@Model.Photos[i-1].Photo" style="width:100%;">
+                                    <div class="order-number">1</div>
+                                </li>
+                            }
+                            <div class="clear-both"></div>
+                        </ul>
+                    </div>
+
+                </div>
+                @if (!CannotEdit) {
+                    <button type="submit" class="button">Save</button>
+                }
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        let seats = document.getElementById('seats').value;
+        let include = document.getElementById('includeSelect').value;
+
+        const submitBtn = document.getElementById("submitBtn");
+
+        function seatsChanged() {
+            let seats = document.getElementById('seats').value;
+            let include = document.getElementById('includeSelect').value;
+
+            console.log(seats, include);
+            if (seats == 1 && include == "true") {
+                $('#imagesContainer').fadeOut()
+                //document.getElementById('imagesContainer').style.display = 'none';
+            }
+            else {
+                $('#imagesContainer').fadeIn()
+                //document.getElementById('imagesContainer').style.display = 'block';
+            }
+        }
+
+
+        $(function () {
+
+            $('#images').change(function (e) {
+                $('#sortable').html('<div class="clear-both"></div>');
+                var files = e.target.files;
+                for (var i = 0; i <= files.length; i++) {
+
+                    // when i == files.length reorder and break
+                    if (i == files.length) {
+                        // need timeout to reorder beacuse prepend is not done
+                        setTimeout(function () { reorderImages(); }, 100);
+                        break;
+                    }
+
+                    var file = files[i];
+                    var reader = new FileReader();
+
+                    reader.onload = (function (file) {
+                        return function (event) {
+                            $('#sortable').prepend('<li class="ui-state-default" data-order=0 data-id="' + file.lastModified + '"><img src="' + event.target.result + '" style="width:100%;" /> <div class="order-number">0</div></li>');
+                        };
+                    })(file);
+
+                    reader.readAsDataURL(file);
+                }// end for;
+
+            });
+
+            $('#sortable').sortable();
+            $('#sortable').disableSelection();
+
+            //sortable events
+            $('#sortable').on('sortbeforestop', function (event) {
+
+                reorderImages();
+
+            });
+
+
+            function reorderImages() {
+                // get the items
+                var images = $('#sortable li');
+
+                var i = 0, nrOrder = 0;
+                for (i; i < images.length; i++) {
+
+                    var image = $(images[i]);
+
+                    if (image.hasClass('ui-state-default') && !image.hasClass('ui-sortable-placeholder')) {
+                        image.attr('data-order', nrOrder);
+                        var orderNumberBox = image.find('.order-number');
+                        orderNumberBox.html(nrOrder + 1);
+                        nrOrder++;
+                    }// end if;
+
+                }// end for;
+            }
+
+        });
+    </script>
+}

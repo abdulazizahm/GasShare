@@ -1,0 +1,7 @@
+﻿@model IEnumerable<OA_Service.ViewModels.CommentViewModel>
+
+
+@foreach (var item in Model)
+{
+    <partial name="_CommentsPartial" model="item" />
+}

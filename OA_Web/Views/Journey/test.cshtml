@@ -1,0 +1,65 @@
+﻿@model OA_Service.ViewModels.SearchViewModel;
+@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+@section Styles
+{
+    <link href="~/site/css/main.css" rel="stylesheet" media="all" />
+}
+<div class="col-10">
+<div class="card card-5">
+    <div class="card-body">
+        <form method="POST" asp-action="Search" asp-controller="Journey">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row row-space">
+                <div class="col-2">
+                    <div class="input-group">
+                        <label class="label">from</label>
+                        <input class="input--style-1" type="text" asp-for="From" placeholder="City, Region or Airport" required="required">
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="input-group">
+                        <label class="label">to</label>
+                        <input class="input--style-1" type="text" asp-for="To" placeholder="City, Region or Airport" required="required">
+                    </div>
+                </div>
+            </div>
+            <div class="row row-space">
+                <div class="col-2">
+                    <div class="row row-space">
+                        <div class="col-2">
+                            <div class="input-group m-b-0">
+                                <label class="label">Passengers</label>
+                                <div class="input-group-icon" id="js-select-special">
+                                    <input class="input--style-1 input--text-small" type="number" asp-for="Passengers_Number" placeholder="1 Person" id="info">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="input-group m-b-0">
+                                <label class="label">Date</label>
+                                <input class="input--style-1" type="Date" asp-for="Date" placeholder="mm/dd/yyyy" id="input-start">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="row row-space">
+                        <div class="col-2">
+                            <div class="input-group m-b-0">
+                                <label class="label">Time</label>
+                                <input class="input--style-1" type="Time" asp-for="Time" placeholder="--:-- tt" id="input-end">
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn-submit" type="submit">search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</div>

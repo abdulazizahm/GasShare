@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Privacy Policy";
+}
+
+<div class="col-12">
+    <partial name="_ComplainPartial">
+</div>
+@section Scripts {
+    <script>
+    $("#formcomplain").ready(function () {
+        $('#message').val = "";
+    });
+    function sendnot()
+    {
+        var Body = $("#Body").val();
+        console.log(Body);
+        var User_Id = $('#User_Id').val();
+        console.log(User_Id);
+        //var datar = { User_id: String(), Body: String() };
+        if (Body != '') {
+            $.ajax({
+                url: '/Complain/AddComplain',
+                type: 'POST',
+                data: { Complained_About_Id: User_Id, Body: Body },
+                success: function (result) {
+                    alert(result);
+                    console.log(result);
+                    $("#Body").val("");
+                    $('#message').css({ "color": "green" });
+                    $('#message').val(result);
+                }
+            });
+        } else {
+            alert("Please Enter Complain That Will Send To Administration Of Website");
+            $('#message').css({ "color": "red" });
+            $('#message').val("Please Enter Complain That Will Send To Administration Of Website");
+        }
+
+    }
+</script>
+}

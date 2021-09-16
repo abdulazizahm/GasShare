@@ -1,0 +1,253 @@
+﻿@model IEnumerable<OA_Service.ViewModels.RequestViewModel>
+
+@{
+    ViewData["Title"] = "Requests";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    var Pending = Model.Where(r => r.Status == OA_DAL.Models.Request_Status.Pending || r.Status == OA_DAL.Models.Request_Status.Updated);
+    var Approved = Model.Where(r => r.Status == OA_DAL.Models.Request_Status.Approved);
+    var Rejected = Model.Where(r => r.Status == OA_DAL.Models.Request_Status.Rejected || r.Status == OA_DAL.Models.Request_Status.Cancelled).OrderByDescending(r => r.Created_at);
+
+    var tab = ViewBag.tab ?? "";
+    var appTab = tab == "Approved";
+    var rejTab = tab == "Rejected";
+}
+
+
+<div class="container">
+
+    <h1>Requests</h1>
+
+    <ul class="nav nav-tabs row" role="tablist">
+        <li class="nav-item col-4 px-0">
+            <a class="nav-link  @(!(appTab || rejTab) ? "active": "") text-dark" onclick="changeURl('')" data-toggle="tab" href="#tabs-1" role="tab">Pending</a>
+        </li>
+        <li class="nav-item col-4 px-0 ">
+            <a class="nav-link text-dark @(appTab ? "active" : "")" data-toggle="tab" onclick="changeURl('Approved')" href="#tabs-2" role="tab">Approved</a>
+        </li>
+        <li class="nav-item col-4 px-0">
+            <a class="nav-link text-dark @(rejTab ? "active" : "")" data-toggle="tab" onclick="changeURl('Rejected')"  href="#tabs-3" role="tab">Rejected / Cancelled</a>
+        </li>
+    </ul>
+    
+    
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane @(!(appTab || rejTab) ? "active": "")" id="tabs-1" role="tabpanel">
+            @* Pending and updated *@
+            @if (ViewBag.message != null)
+            {
+
+                <div class="alert alert-warning" role="alert">
+                    @ViewBag.message
+                </div>
+
+            }
+
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        @if (User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Name
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(model => model.Seats)
+                        </th>
+
+                        @if (!User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Status
+                            </th>
+                        }
+                        <th>
+                            Journey
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Pending)
+                    {
+
+
+                        <tr>
+                            @if (User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @item.User.FirstName @item.User.LastName
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Seats)
+                            </td>
+                            @if (!User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                            }
+                            <td>
+                                <a asp-action="Details" asp-controller="Journey" asp-route-id="@item.Journey_Id" class="text-decoration-none text-dark">View Journey</a>
+                            </td>
+                            <td>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <a asp-action="View" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="tab-pane @(appTab ? "active" : "")" id="tabs-2" role="tabpanel">
+
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        @if (User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Name
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(model => model.Seats)
+                        </th>
+
+                        @if (!User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Status
+                            </th>
+                        }
+                        <th>
+                            Journey
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Approved)
+                    {
+
+
+                        <tr>
+                            @if (User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @item.User.FirstName @item.User.LastName
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Seats)
+                            </td>
+                            @if (!User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                            }
+                            <td>
+                                <a asp-action="Details" asp-controller="Journey" asp-route-id="@item.Journey_Id" class="text-decoration-none text-dark">View Journey</a>
+                            </td>
+                            <td>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <a asp-action="View" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+        <div class="tab-pane @(rejTab ? "active" : "")" id="tabs-3" role="tabpanel">
+
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        @if (User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Name
+                            </th>
+                        }
+                        <th>
+                            @Html.DisplayNameFor(model => model.Seats)
+                        </th>
+
+                        @if (!User.IsInRole("Car_Owner"))
+                        {
+                            <th>
+                                Status
+                            </th>
+                        }
+                        <th>
+                            Journey
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Rejected)
+                    {
+
+
+                        <tr>
+                            @if (User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @item.User.FirstName @item.User.LastName
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Seats)
+                            </td>
+                            @if (!User.IsInRole("Car_Owner"))
+                            {
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status)
+                                </td>
+                            }
+                            <td>
+                                <a asp-action="Details" asp-controller="Journey" asp-route-id="@item.Journey_Id" class="text-decoration-none text-dark">View Journey</a>
+                            </td>
+                            <td>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <a asp-action="View" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    
+</div>
+<script> var message = '@ViewBag.message' </script>
+
+@section Scripts {
+    <script>
+        function changeURl(tabName) {
+            window.history.pushState('', '', `?tab=${tabName}`);
+        }
+    </script>
+}

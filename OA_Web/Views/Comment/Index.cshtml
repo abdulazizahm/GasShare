@@ -1,0 +1,22 @@
+﻿@model IEnumerable<OA_Service.ViewModels.CommentViewModel>
+
+
+
+@{
+    ViewData["Title"] = "Index";
+   
+}
+
+<div style="margin-left:30%">
+    <h3><b>@ViewBag.commentNumber </b> comments</h3>
+    <br />
+    @foreach (var item in Model)
+    {
+        <partial name="_CommentsPartial" model="item" />
+        <br />
+    }
+</div>
+
+
+
+

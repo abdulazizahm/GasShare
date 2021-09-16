@@ -1,0 +1,438 @@
+﻿@model OA_Service.ViewModels.JourneyViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+@section Styles {
+    <style>
+        .pac-container {
+            z-index: 10000;
+            max-width: 70%;
+        }
+    </style>
+
+}
+
+<div class="container">
+
+    <hr />
+    <div class="container">
+        <h1>Create new Journey</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    @*<div asp-validation-summary="All" class="text-danger"></div>*@
+                    @*<div class="form-group">
+            <label asp-for="Id" class="control-label"></label>
+            <input asp-for="Id" class="form-control" />
+            <span asp-validation-for="Id" class="text-danger"></span>
+        </div>*@
+                    <div class="form-group">
+                        <label asp-for="Time" class="control-label"></label>
+                        <input asp-for="Time" class="form-control" />
+                        <span asp-validation-for="Time" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Date" class="datepicker"></label>
+                        <input asp-for="Date" id="datepicker" type="date" class="form-control" />
+                        <span asp-validation-for="Date"  class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Passengers_Number" class="control-label"></label>
+                        <input asp-for="Passengers_Number" class="form-control" />
+                        <span asp-validation-for="Passengers_Number" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="From" class="control-label"></label>
+                        <div class="d-flex">
+                            <div style="width: -webkit-fill-available;">
+                                <input asp-for="From" class="form-control" id="fromLocation" readonly />
+                            </div>
+                            <div class="ml-2">
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal" data-clicked="yes" onclick="map1Clicked()" id="map1"><i class="fas fa-map-marker-alt"></i></button>
+                            </div>
+
+                        </div>
+
+                        <span asp-validation-for="From" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="To" class="control-label"></label>
+                        <div class="d-flex">
+                            <div style="width: -webkit-fill-available;">
+                                <input asp-for="To" class="form-control" id="toLocation" readonly />
+                            </div>
+                            <div class="ml-2">
+                                <button type="button" class="" data-toggle="modal" data-target="#myModal" data-clicked="no" onclick="map2Clicked()" id="map2"><i class="fas fa-map-marker-alt"></i></button>
+                            </div>
+                        </div>
+                        <span asp-validation-for="To" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Distance" class="control-label"></label>
+                        <input asp-for="Distance" readonly id="distanceInput" class="form-control" />
+                        <span asp-validation-for="Distance" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Price" class="control-label"></label>
+                        <input asp-for="Price" id="distanceInput" class="form-control" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group" hidden>
+                        <label asp-for="Form_Long" class="control-label"></label>
+                        <input asp-for="Form_Long" on="parmsChanged()" class="form-control" id="longitude" />
+                        <span asp-validation-for="Form_Long" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="Form_Lat" class="control-label"></label>
+                        <input asp-for="Form_Lat" class="form-control" id="latitude" />
+                        <span asp-validation-for="Form_Lat" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="To_Long" class="control-label"></label>
+                        <input asp-for="To_Long" class="form-control" id="longitude2" />
+                        <span asp-validation-for="To_Long" class="text-danger"></span>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label asp-for="To_Lat" class="control-label"></label>
+                        <input asp-for="To_Lat" class="form-control" id="latitude2" />
+                        <span asp-validation-for="To_Lat" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Desc" class="control-label"></label>
+                        <input asp-for="Desc" class="form-control" />
+                        <span asp-validation-for="Desc" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div hidden>
+        Current Location is :  <input type="text" class="form-control" id="pac-input">
+    </div>
+
+
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog" style="overflow:hidden">
+        <div class="modal-dialog modal-lg" style="max-width: 1164px">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="display:block">
+                    <button type="button" onclick="parmsChanged()" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modal Header</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="ForMap" style="height: 500px;">
+                        <div id="map" style="height: 500px;">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="parmsChanged()" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" onclick="parmsChanged()" class="btn btn-default" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function setDatePickerMin() {
+            // Use Javascript
+            var today = new Date();
+            var dd = today.getDate() + 1;
+            var mm = today.getMonth() + 1; //January is 0 so need to add 1 to make it 1!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("datepicker").setAttribute("min", today);
+        }
+
+        setDatePickerMin();
+
+
+        $("#pac-input").focusin(function () {
+            $(this).val('');
+        });
+        $('#latitude').val('');
+        $('#longitude').val('');
+        $('#latitude2').val('');
+        $('#longitude2').val('');
+        // This example adds a search box to a map, using the Google Place Autocomplete
+        // feature. People can enter geographical searches. The search box will return a
+        // pick list containing a mix of places and predicted search terms.
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+        function initAutocomplete() {
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 24.740691, lng: 46.6528521 },
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
+            // move pin and current location
+            infoWindow = new google.maps.InfoWindow;
+
+            geocoder = new google.maps.Geocoder();
+            if (navigator.geolocation) {
+                let markers = [];
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(pos);
+                    var marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(pos),
+                        map: map,
+                        draggable: true,
+                        title: 'موقعك الحالي'
+                    });
+                    //
+                    markers.push(marker);
+
+                    marker.addListener('click', function () {
+                        geocodeLatLng(geocoder, map, infoWindow, marker);
+                       // alert("ffffffffff");
+                    });
+                    // to get current position address on load
+                    google.maps.event.trigger(marker, 'click');
+                }, function () {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } else {
+                // Browser doesn't support Geolocation
+
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+            var geocoder = new google.maps.Geocoder();
+            google.maps.event.addListener(map, 'click', function (event) {
+                SelectedLatLng = event.latLng;
+                geocoder.geocode({
+                    'latLng': event.latLng
+                }, function (results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        if (results[0]) {
+                            deleteMarkers();
+                            addMarkerRunTime(event.latLng);
+                            SelectedLocation = results[0].formatted_address;
+                            console.log(results[0].formatted_address);
+                            splitLatLng(String(event.latLng));
+                            $("#pac-input").val(results[0].formatted_address);
+                            if ($("#map1").attr("data-clicked") == "yes") {
+                                $("#fromLocation").val(results[0].formatted_address);
+                              
+                            }
+                           else {
+                                $("#toLocation").val(results[0].formatted_address);
+                               
+                            }
+                            //alert("bif")
+                            //alert($("#map1").data("clicked") + $("#map2").data("clicked"))
+                        }
+                    }
+                });
+            });
+            function geocodeLatLng(geocoder, map, infowindow, markerCurrent) {
+                var latlng = { lat: markerCurrent.position.lat(), lng: markerCurrent.position.lng() };
+                /* $('#branch-latLng').val("("+markerCurrent.position.lat() +","+markerCurrent.position.lng()+")");*/
+                $('#latitude').val(markerCurrent.position.lat());
+                $('#longitude').val(markerCurrent.position.lng());
+                geocoder.geocode({ 'location': latlng }, function (results, status) {
+                    if (status === 'OK') {
+                        if (results[0]) {
+                            map.setZoom(8);
+                            var marker = new google.maps.Marker({
+                                position: latlng,
+                                draggable: true,
+                                map: map
+                            });
+                            markers.push(marker);
+                            infowindow.setContent(results[0].formatted_address);
+                            SelectedLocation = results[0].formatted_address;
+                            $("#pac-input").val(results[0].formatted_address);
+                            if ($("#map1").attr("data-clicked")  == "yes") {
+                                $("#fromLocation").val(results[0].formatted_address);
+                              
+                            }
+                            else {
+                                $("#toLocation").val(results[0].formatted_address);
+                               
+                            }
+                            infowindow.open(map, marker);
+                        } else {
+                            window.alert('No results found');
+                        }
+                    } else {
+                        window.alert('Geocoder failed due to: ' + status);
+                    }
+                });
+                SelectedLatLng = (markerCurrent.position.lat(), markerCurrent.position.lng());
+            }
+            function addMarkerRunTime(location) {
+                var marker = new google.maps.Marker({
+                    position: location,
+                    draggable: true,
+                    map: map
+                });
+                markers.push(marker);
+            }
+            function setMapOnAll(map) {
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(map);
+                }
+            }
+            function clearMarkers() {
+                setMapOnAll(null);
+            }
+            function deleteMarkers() {
+                clearMarkers();
+                markers = [];
+            }
+            // Create the search box and link it to the UI element.
+            var input = document.getElementById('pac-input');
+            $("#pac-input").val("أبحث هنا ");
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+            let markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+                if (places.length == 0) {
+                    return;
+                }
+                // Clear out the old markers.
+                markers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                markers = [];
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    var icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(100, 100),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25)
+                    };
+                    // Create a marker for each place.
+                    markers.push(new google.maps.Marker({
+                        map: map,
+                        icon: icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    }));
+                    if ($("#map1").attr("data-clicked") == "yes") {
+                        $('#latitude').val(place.geometry.location.lat());
+                        $('#longitude').val(place.geometry.location.lng());
+
+                    }
+                    else {
+                        $('#latitude2').val(place.geometry.location.lat());
+                        $('#longitude2').val(place.geometry.location.lng());
+
+                    }
+                   
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+        function splitLatLng(latLng) {
+            var newString = latLng.substring(0, latLng.length - 1);
+            var newString2 = newString.substring(1);
+            var trainindIdArray = newString2.split(',');
+            var lat = trainindIdArray[0];
+            var Lng = trainindIdArray[1];
+           if($("#map1").attr("data-clicked") == "yes") {
+               $("#latitude").val(lat);
+               $("#longitude").val(Lng);
+            }
+            else {
+               $("#latitude2").val(lat);
+               $("#longitude2").val(Lng);
+            }
+        }
+    </script>
+
+    <script>
+
+        
+    
+        function map2Clicked() {
+            $("#map2").attr("data-clicked", "yes");
+            $("#map1").attr("data-clicked", "no")
+         
+            //alert("you clicked in buttun 2")
+        }
+        function map1Clicked() {
+            $("#map2").attr("data-clicked", "no");
+            $("#map1").attr("data-clicked", "yes")
+         
+            //alert("you clicked in buttun 1")
+        }
+
+        function parmsChanged() {
+            var fromLat = $("#latitude").val();
+            var fromLong = $("#longitude").val();
+            var toLat = $("#latitude2").val();
+            var toLong = $("#longitude2").val();
+
+            if (fromLat != null && fromLat != "" && fromLong != null && fromLong != "" && toLat != null && toLat != "" && toLong != null && toLong != "") {
+                $.get("/Home/DistanceTo?lat1=" + fromLat + '&lon1=' + fromLong + '&lat2=' + toLat + '&lon2=' + toLong, function (data) {
+                    $('#distanceInput').val(data);
+                })
+            }
+        }
+
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtxTjUI11VOLaFVnOVYd5cYW3o0e0_cxQ&callback=initAutocomplete&libraries=places"></script>
+}

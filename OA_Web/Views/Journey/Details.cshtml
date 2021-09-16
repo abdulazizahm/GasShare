@@ -1,0 +1,326 @@
+﻿@model List<OA_DAL.Models.JourneyRate>
+
+@{
+    ViewData["Title"] = "Rates";
+    var journey = (OA_Service.ViewModels.JourneyViewModel)ViewBag.Journey;
+    var approved = journey.Requests.Where(r => r.Status == OA_DAL.Models.Request_Status.Approved);
+    var Pending = journey.Requests.Where(r => r.Status == OA_DAL.Models.Request_Status.Pending || r.Status == OA_DAL.Models.Request_Status.Updated);
+    var Rejected = journey.Requests.Where(r => r.Status == OA_DAL.Models.Request_Status.Rejected || r.Status == OA_DAL.Models.Request_Status.Cancelled);
+    var hasRating = Model.Count > 0;
+}
+
+
+
+
+<div class="container">
+    @* The Journey Starts *@
+    <partial name="_JourneyPartial" model="journey"/>
+    @* the Journey Ends *@
+
+
+    <div class="row">
+        @if (hasRating)
+        {
+            <div class="col-md-6 col-12">
+            <h2>Rates</h2>
+            <hr />
+            @foreach (var item in Model)
+            {
+
+                <div class="d-flex flex-column-reverse accordian-content" style="display: flex">
+                    <div class="d-flex align-content-center px-0">
+                        <img src="~/images/Users/@item.User.Photo" style="object-fit:cover" class="rounded-circle" width="40" height="40">
+                        <div class="comment-body">
+                            <h6><a class="text-decoration-none text-dark" href="~/Profile/Id/@item.User.Id">@item.User.FirstName @item.User.LastName</a></h6>
+                            <p>@item.Comment</p>
+                        </div>
+
+                    </div>
+                    <div class=" px-0 pb-3 ">
+
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= item.Rate)
+                            {
+
+
+                                <span class="float-left fa fa-star checked"></span>
+                            }
+                            else
+                            {
+                                <span class="float-left fa fa-star"></span>
+                            }
+                        }
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            }
+            </div>
+        }
+        
+    <div class="col-12 @(hasRating? "col-md-6" : "col-md-12")">
+        @if (User.Identity.Name != journey.Car_Owner.UserName)
+        {
+            <h2 class="pt-3">Passengers</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            Name
+                        </th>
+
+                        <th>
+                            Seats
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in approved)
+                    {
+                        <tr>
+                            <td>
+                                <a class="text-dark" asp-action="Id" asp-controller="Profile" asp-route-id="@item.User.Id">@item.User.FirstName @item.User.LastName</a>
+                            </td>
+
+                            <td>
+                                @item.Seats
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <h2 class="pt-3">Requests</h2>
+            <ul class="nav nav-tabs row" role="tablist">
+                <li class="nav-item col-4 px-0">
+                    <a class="nav-link active text-dark font-weight-bold" data-toggle="tab" href="#tabs-1" role="tab">Pending</a>
+                </li>
+                <li class="nav-item col-4 px-0 ">
+                    <a class="nav-link text-dark font-weight-bold" data-toggle="tab" href="#tabs-2" role="tab">Approved</a>
+                </li>
+                <li class="nav-item col-4 px-0">
+                    <a class="nav-link text-dark font-weight-bold" data-toggle="tab" href="#tabs-3" role="tab">Rejected / Cancelled</a>
+                </li>
+            </ul>
+
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="tabs-1" role="tabpanel">
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Name
+                                    </th>
+                                }
+                                <th>
+                                    Seats
+                                </th>
+
+                                @if (!User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Status
+                                    </th>
+                                }
+                                <th>
+                                    Request
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Pending)
+                            {
+
+
+                                <tr>
+                                    @if (User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @item.User.FirstName @item.User.LastName
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Seats)
+                                    </td>
+                                    @if (!User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </td>
+                                    }
+                                    <td>
+                                        @if (User.IsInRole("Car_Owner"))
+                                        {
+                                            <a asp-action="View" asp-controller="Request" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="tab-pane" id="tabs-2" role="tabpanel">
+
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Name
+                                    </th>
+                                }
+                                <th>
+                                    Seats
+                                </th>
+
+                                @if (!User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Status
+                                    </th>
+                                }
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in approved)
+                            {
+                                <tr>
+                                    @if (User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @item.User.FirstName @item.User.LastName
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Seats)
+                                    </td>
+                                    @if (!User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </td>
+                                    }
+                                    <td>
+                                        @if (User.IsInRole("Car_Owner"))
+                                        {
+                                            <a asp-action="View" asp-controller="Request" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="tab-pane" id="tabs-3" role="tabpanel">
+
+                    <table class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                @if (User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Name
+                                    </th>
+                                }
+                                <th>
+                                    Sears
+                                </th>
+
+                                @if (!User.IsInRole("Car_Owner"))
+                                {
+                                    <th>
+                                        Status
+                                    </th>
+                                }
+                                <th>
+                                    Request
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Rejected)
+                            {
+
+
+                                <tr>
+                                    @if (User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @item.User.FirstName @item.User.LastName
+                                        </td>
+                                    }
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Seats)
+                                    </td>
+                                    @if (!User.IsInRole("Car_Owner"))
+                                    {
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Status)
+                                        </td>
+                                    }
+                                    <td>
+                                        @if (User.IsInRole("Car_Owner"))
+                                        {
+                                            <a asp-action="View" asp-controller="Request" asp-route-id="@item.Id" class="text-decoration-none text-dark">View Request</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        }
+    </div>
+    </div>
+    
+
+</div>
+<script> var message = '@ViewBag.message' </script>
+
+@section Scripts {
+    <script>
+        function ShowAlert() {
+            //var successRegex = /\b(?:successfully)\b/gi;
+            var warrnigRegex = /\b(?:already)\b/gi;
+            var dangerRegex = /\b(?:cannot|Invalid)\b/gi;
+
+            if (message != null && message != "") {
+                if (dangerRegex.test(message)) {
+                    createAlert('Opps!', 'Something went wrong', message, 'danger', true, false, 'pageMessages')
+                }
+                else if (warrnigRegex.test(message)) {
+                    createAlert('', '', message, 'warning', true, true, 'pageMessages');
+                } else {
+                    createAlert('', '', message, 'success', true, true, 'pageMessages');
+                }
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            ShowAlert()
+        });
+
+    </script>
+}

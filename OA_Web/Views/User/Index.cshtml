@@ -1,0 +1,64 @@
+﻿@model IEnumerable<OA_Service.ViewModels.AdminDisplayUserViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+
+
+
+}
+
+@section Styles {
+    <style>
+        input[type=text] {
+            width: 130px;
+            -webkit-transition: width 0.4s ease-in-out;
+            transition: width 0.4s ease-in-out;
+        }
+
+            /* When the input field gets focus, change its width to 100% */
+            input[type=text]:focus {
+                width: 50%;
+            }
+
+        @@media (max-width: 758px) {
+            input[type=text]:focus {
+                width: 80%;
+            }
+        }
+    </style>
+}
+@if (ViewBag.Acive)
+{
+    <h1>Active Users</h1>
+}
+else
+{
+    <h1>Blocked Users</h1>
+}
+
+<div class="container">
+    <form class="d-flex" onsubmit="SearchUser(event)">
+        <input type="text" name="search" id="searchQuery" class="form-control" placeholder="Search..">
+        <button type="submit" style="background:none; border:none; cursor: pointer"><i class="fa fa-search text-light"></i></button>
+    </form>
+</div>
+
+<div id="searchResults">
+    <partial name="_SearchUsers" model="@Model" />
+</div>
+
+<script>var active = '@ViewBag.Active'</script>
+
+@section Scripts {
+    <script>
+        function SearchUser(e) {
+            e.preventDefault();
+            var query = document.getElementById('searchQuery').value;
+            $.get(`/User/Search?query=${query}&active=${active}`, function (data) {
+                document.getElementById('searchResults').innerHTML = data;
+            });
+        }
+    </script>
+}

@@ -1,0 +1,68 @@
+﻿@model OA_Service.ViewModels.UserPhotoViewModel
+
+@{
+    ViewData["Title"] = "SavePhoto";
+}
+
+<h1>SavePhoto</h1>
+
+<h4>UserPhoto</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SavePhoto" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SSN_Photo" class="control-label"></label>
+                <div>
+                    <img src="~/img/avatar-1.jpg" width="150px" height="150px" id="SSN_Photo"/>
+                </div>
+                <input type="file" asp-for="FormFileSSN" class="form-control" onchange="func1(this)"/>
+                <span asp-validation-for="SSN_Photo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LicencePhoto" class="control-label"></label>
+                <div>
+                    <img src="~/img/avatar-1.jpg" width="150px" height="150px" id="LicencePhoto" />
+                </div>
+                <input type="file" asp-for="FormFileLicencePhoto" class="form-control" onchange="func2(this)" />
+                <span asp-validation-for="LicencePhoto" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+         function func1(fileInput) {
+             var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+             filereader.onload = (event) => {
+                 document.getElementById("SSN_Photo").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+        function func2(fileInput) {
+            var fileToUpload = fileInput.files.item(0)
+
+            var filereader = new FileReader();
+            filereader.onload = (event) => {
+                document.getElementById("LicencePhoto").src = event.target.result;
+
+            }
+            filereader.readAsDataURL(fileToUpload)
+        }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,70 @@
+﻿<div class="container">
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Complain Him</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="bg-dark text-white modal-header ">
+                    <div class="col-sm-11">
+                        <h4 class="modal-title text-left" style="font-size: 2em; color: white;">Make Complain</h4>
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="close" style="font-size:2em;" data-dismiss="modal">&times;</button>
+                    </div>
+                </div>
+                <form class="form-horizontal" id="formcomplain">
+                    @*<input type="hidden" value="@(Model.Complained_About.Id)" name="Complained_About_Id" id="User_Id" />*@
+                    <input type="hidden" value="930472e4-8368-46c1-8083-e4b0328cb6d1" name="Complained_About_Id" id="User_Id" />
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="col-md-10  col-sm-9">
+                                <label class="control-label" for="comment" style="font-size: 2em; ">Complain message:</label>
+                                <textarea class="form-control"  required rows="5" name="Body" id="Body" oninvalid="this.setCustomValidity('Please Enter Complain That Will Send To Administration Of Website')" oninput="setCustomValidity('')"></textarea>
+                            </div>
+                            <div class="col-md-2 col-sm-3 hide"></div>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;<div id="message"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class='btn btn-primary'  onclick="sendnot()">Send Complain</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@*<script>
+    $("#formcomplain").ready(function () {
+        $('#message').val = "";
+    });
+    function sendnot() {
+        
+        var Body = $("#Body").val;
+        console.log(Body);
+        var User_Id = $('User_Id').val;
+        console.log(User_Id);
+        //var datar = { User_id: String(), Body: String() };
+        if (Body != '') {
+            $.ajax({
+                url: '/Complain/AddComplain',
+                type: 'POST',
+                data: { Complained_About_Id: User_Id, Body: Body },
+                success: function (result) {
+                    alert(result);
+                    console.log(result);
+                    $("#Body").val= "";
+                    $('#message').css({ "color": "green" });
+                    $('#message').val = result;
+                }
+            });
+        } else {
+            alert("Please Enter Complain That Will Send To Administration Of Website");
+            $('#message').css({ "color": "red" });
+            $('#message').val = "Please Enter Complain That Will Send To Administration Of Website";
+        }
+
+    }
+</script>*@

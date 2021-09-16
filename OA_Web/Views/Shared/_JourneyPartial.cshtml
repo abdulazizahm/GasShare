@@ -1,0 +1,333 @@
+﻿@model OA_Service.ViewModels.JourneyViewModel
+
+
+@inject OA_Service.AppServices.CommentAppService commentApp
+@inject OA_Service.AppServices.RequestAppService requestAppService
+@inject OA_Service.AppServices.AccountAppService accountAppService
+
+
+@{
+
+    var comments = commentApp.GetAllComments().Where(c => c.Journey_Id == Model.Id);
+    ViewData["commentNumber"] = comments.Count();
+    var isActive = false;
+
+    if (User.Identity.IsAuthenticated)
+    {
+        isActive = accountAppService.FindByEmail(User.Identity.Name).IsActive;
+    }
+
+
+    var requests = requestAppService.GetJourneyRequests(Model.Id);
+    var booked = false;
+    var reqId = 0;
+    var cancelled = false;
+    bool Approved = false;
+    bool Rejected = false;
+    bool Updated = false;
+
+
+    foreach (var request in requests)
+    {
+        if (request.User.UserName == User.Identity.Name)
+        {
+            booked = true;
+            reqId = request.Id;
+            cancelled = request.Status == OA_DAL.Models.Request_Status.Cancelled;
+            Approved = request.Status == OA_DAL.Models.Request_Status.Approved;
+            Rejected = request.Status == OA_DAL.Models.Request_Status.Rejected;
+            Updated = request.Status == OA_DAL.Models.Request_Status.Updated;
+            break;
+        }
+    }
+
+    var withDeails = ViewData["WithDetails"];
+}
+
+
+
+<div class="card-group vgr-cards">
+    <div class="card">
+        <div class="card-img-body">
+            @if (Model.Car_Owner.Car != null)
+            {
+                <img class="card-img" src="/images/Cars/@Model.Car_Owner.Car.Car_Photo" alt="Card image cap">
+            }
+
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <div class="d-flex">
+                    <img class="rounded-circle" src="~/images/Users/@Model.Car_Owner.Photo" style="width:50px;height:50px; object-fit: cover">
+
+                    <h5 class="card-title mx-2 pt-3 "><a class="text-decoration-none text-dark" href="/Profile/Id/@Model.Car_Owner.Id">@Model.Car_Owner.FirstName @Model.Car_Owner.LastName</a></h5>
+                </div>
+                <div>
+                    <span class="h5 font-weight-bold d-block pt-3">@Model.Price <span>LE</span></span>
+                </div>
+
+                @{
+                    var theDate = new DateTime(Model.Date.Year, Model.Date.Month, Model.Date.Day, Model.Time.Hour, Model.Time.Minute, Model.Time.Second);
+                    double diff2 = (theDate - DateTime.Now).TotalDays;
+                }
+
+                @if (User.Identity.IsAuthenticated && !User.IsInRole("Car_Owner"))
+                {
+                    //requestAppService.GetJourneyRequests(Model.Id).Where(r => r.User_Id == userId && r.Status != 0 && DateTime.Compare(DateTime.Now, r.Journey.Date) > 0).Count() > 0
+                    string userId = accountAppService.FindByEmail(User.Identity.Name).Id;
+                    if (diff2 <= 0 && Approved)
+                    {
+                        <div>
+                            <button type="button" class="myJourneyRateModal" data-toggle="modal" data-target="#journeyRateModal" onclick="RateJourney(this)" data-JournyId="@Model.Id" data-userId="@userId">
+                                <i class="fas fa-star-half-alt"></i>
+                            </button>
+                        </div>
+                    }
+                }
+
+                @if (User.IsInRole("Car_Owner") && Model.Car_Owner.UserName == User.Identity.Name && diff2 >= 2)
+                {
+                    <div class="dropdown">
+                        <span class="material-icons" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            more_vert
+                        </span>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+
+                            <a asp-action="Edit" asp-controller="Journey" asp-route-id="@Model.Id" class="dropdown-item">Edit Journey</a>
+                            <a asp-action="Delete" asp-controller="Journey" asp-route-id="@Model.Id" class="dropdown-item">Delete Journey</a>
+                            @if (User.IsInRole("Car_Owner") && Model.Car_Owner.UserName == User.Identity.Name)
+                            {
+                                <button class="dropdown-item" onclick="updateLocation(@Model.Id)">update Location</button>
+                            }
+                        </div>
+                    </div>
+                }
+
+            </div>
+            <p class="card-text">
+
+                <span class="text-success font-weight-bold" style="padding-right: 31px">From</span> :@Model.From <br />
+                <span class="text-success font-weight-bold" style="padding-right: 54px ">To</span> :@Model.To <br />
+                <span class="text-success font-weight-bold" style="padding-right: 50px ">On</span> :@Model.Date.ToString("ddd dd MMMM") at @Model.Time.ToString("hh:mm tt") <br>
+                @if (Model.Distance != 0)
+                {
+                    var dis = Math.Round(Model.Distance, 2);
+                    <span class="text-success font-weight-bold" style="padding-right: 5px">Distance</span> <span>:@dis KM</span> <br>
+                }
+                <span class="text-success font-weight-bold" style="padding-right: 5px">Description </span> <span> :@Model.Desc</span> <br>
+                @if (Model.CurrentPosition != null)
+                {
+                    <span class="text-success font-weight-bold" style="padding-right: 5px">Current Position </span> <span> :@Model.CurrentPosition</span> <br>
+                }
+
+
+
+            </p>
+            <div class="d-flex justify-content-between flex-md-row flex-column">
+                <div class="text-success font-weight-bold my-1">
+                    (@Model.Passengers_Number) Seats available 
+                    @if (!Model.IsActive)
+                    {<span class="text-danger">Closed</span>}
+                </div>
+                <div class="text-center">
+                    <a asp-action="Details" asp-controller="Journey" asp-route-id="@Model.Id" style="text-decoration:none;color:lightgray">
+                        @{
+                            int sum = 0;
+                            for (int i = 0; i < Model.Rates.Count; i++)
+                            {
+                                sum += Model.Rates[i].Rate;
+                            }
+                            int avg = 0;
+                            if (sum != 0)
+                                avg = sum / Model.Rates.Count;
+
+
+                        }
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= avg)
+                            {
+
+
+                                <span class="fa fa-star checked"></span>
+                            }
+                            else
+                            {
+                                <span class="fa fa-star "></span>
+                            }
+                        }
+
+
+                    </a>
+                </div>
+
+
+
+
+
+                @if (User.Identity.IsAuthenticated && !(User.IsInRole("Car_Owner" ) || User.IsInRole("Admin")) && isActive)
+                {
+
+                    @if (cancelled || Rejected)
+                    {
+                        <button type="button" class="btn btn-secondary my-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @if (cancelled)
+                            {
+                                <text>Cancelled</text>
+                            }
+                            else
+                            {
+                                <text>Rejected</text>
+                            }
+
+                        </button>
+
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-action="Edit" asp-controller="Request" asp-route-id="@reqId">Edit Request</a>
+                        </div>
+                    }
+                    else if (Approved)
+                    {
+
+                        <div class="btn-group justify-content-end">
+                            <button type="button" class="btn btn-secondary col-6 col-md-12 my-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Approved
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-action="Cancel" asp-controller="Request" asp-route-id="@reqId">Cancel Request</a>
+                                <a class="dropdown-item" asp-action="Edit" asp-controller="Request" asp-route-id="@reqId">Edit Request</a>
+                            </div>
+                        </div>
+                    }
+                    else if (Updated)
+                    {
+
+                        <div class="btn-group justify-content-end">
+                            <button type="button" class="btn btn-secondary col-6 col-md-12 my-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Updated
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-action="Cancel" asp-controller="Request" asp-route-id="@reqId">Cancel Request</a>
+                                <a class="dropdown-item" asp-action="Edit" asp-controller="Request" asp-route-id="@reqId">Edit Request</a>
+                            </div>
+                        </div>
+                    }
+                    else if (booked)
+                    {
+                        <div class="btn-group justify-content-end">
+                            <button type="button" class="btn btn-secondary col-6 col-md-12 my-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Requested
+                            </button>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" asp-action="Cancel" asp-controller="Request" asp-route-id="@reqId">Cancel Request</a>
+                                <a class="dropdown-item" asp-action="Edit" asp-controller="Request" asp-route-id="@reqId">Edit Request</a>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        
+                        if (Model.IsActive && diff2 > 0)
+                        {
+                            <div class="btn-group justify-content-end">
+                                <button type="button" class="btn btn-secondary col-6 col-md-12 my-1 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Book
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-action="Create" asp-controller="Request" asp-route-id="@Model.Id">Go to book</a>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                }
+
+
+            </div>
+                <div class="accordian">
+                    <div class="accordian-title">
+                        Comments Section
+                        <span>
+                            <svg width="16px" height="16px" viewBox="0 0 24 24" aria-labelledby="plusIconTitle" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <title id="plusIconTitle">Plus</title>
+                                <path d="M20 12L4 12M12 4L12 20" />
+                            </svg>
+                        </span>
+                    </div>
+                    <div class="accordian-content">
+                        <div class="container" id="newComment">
+                            @if (User.Identity.IsAuthenticated && isActive)
+                            {
+                                <form id="@Model.Id" onsubmit="addComment(event)">
+                                    <div class="row" style="margin-top:1%">
+                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                        <div class="col-12 col-md-10">
+                                            <div class="form-group">
+
+                                                <textarea name="Body" id="Body-@Model.Id" class="form-control" style="width:100%" required placeholder="Enter your comment here"></textarea>
+                                                @*<span asp-validation-for="@commentview.Body" class="text-danger"></span>*@
+                                            </div>
+                                            <input type="hidden" name="Journey_Id" id="Journey_Id" value="@Model.Id" />
+                                            <input type="hidden" name="Id" id="@Model.Id-Comment-Id" value="@Model.Id" />
+                                        </div>
+                                        <div class="col-4 col-md-2">
+                                            <div class="form-group">
+                                                <input type="submit" value="Post" id="submitBtn-@Model.Id" class="btn btn-primary" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
+
+                        </div>
+                        <div id="@Model.Id-comments">
+                            @foreach (var item in comments)
+                            {
+
+                                <partial name="_CommentsPartial" model="item" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        function funcc(d, x) {
+
+            $.get("/journey/updateLocation?address=" + d.results[0].formatted_address + "&&id=" + x, function (data) {
+                if (data == "success") {
+                    alert("Success Update Your Location");
+                } else {
+                    alert("Failed to update your location..please check your connection and enable location");
+                }
+            })
+        }
+        function updateLocation(x) {
+            alert(x)
+            var pos = null;
+            navigator.geolocation.getCurrentPosition(function (position) {
+                pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+
+
+                }
+                if (pos != null) {
+                    $.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + pos.lat + ',' + pos.lng + '&key=AIzaSyAtxTjUI11VOLaFVnOVYd5cYW3o0e0_cxQ', function (d) { funcc(d, x) })
+
+                }
+
+            })
+
+
+        }
+
+
+    </script>
+
+

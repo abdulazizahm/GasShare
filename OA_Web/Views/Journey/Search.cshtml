@@ -1,0 +1,64 @@
+﻿
+@model IEnumerable<OA_Service.ViewModels.JourneyViewModel>
+
+
+
+@{
+    ViewData["Title"] = "Search";
+
+    var search = ViewBag.search;
+}
+<div class="container">
+
+    <partial name="_SearchPartial" model="search" />
+    @if (Model == null)
+    {
+        <h3>Use advanced search to filter search results</h3>
+    }
+    else if (Model.Count() != 0)
+    {
+
+        @foreach (var journey in Model)
+        {
+            <partial name="_JourneyPartial" model="journey" />
+        }
+    }
+
+    else
+    {
+        <h3 style="color:red">No journey available From @search.From To @search.To</h3>
+    }
+
+
+</div>
+
+@section Scripts{
+
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function setDatePickerMin() {
+            // Use Javascript
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth() + 1; //January is 0 so need to add 1 to make it 1!
+            var yyyy = today.getFullYear();
+            if (dd < 10) {
+                dd = '0' + dd
+            }
+            if (mm < 10) {
+                mm = '0' + mm
+            }
+
+            today = yyyy + '-' + mm + '-' + dd;
+            document.getElementById("datepicker").setAttribute("min", today);
+        }
+
+        setDatePickerMin();
+    </script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+}

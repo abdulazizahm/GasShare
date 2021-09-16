@@ -1,0 +1,24 @@
+﻿@model OA_Service.ViewModels.UserPhotoViewModel
+@{
+    ViewData["Title"] = "Details";
+    Layout = "_AdminLayout";
+}
+
+<h1>Details</h1>
+<ul class="nav nav-tabs">
+   
+    <li class="active btn btn-primary"><a data-toggle="tab" href="#home">SSN Photo</a></li>
+    <li class="btn btn-primary"><a data-toggle="tab" href="#menu1">Licnece Photo</a></li>
+
+</ul>
+
+<div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+        
+        <img src="~/images/UserPhotos/@Model.SSN_Photo" width="500px" height="400px"/>
+    </div>
+    <div id="menu1" class="tab-pane fade">
+        <img src="~/images/UserPhotos/@Model.LicencePhoto" width="500px" height="400px" />
+    </div>
+
+</div>
